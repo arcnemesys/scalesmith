@@ -21,9 +21,10 @@ class BuildManager:
     def _configure(self, config):
         known = set(config.keys())
         return {n: self._check(n, d, known)
-                for n, d in config.items()}
+                for n, d in config.items() if not self._is_phony(config[n])}
 
     def _check(self, name, details, known):
+        
         self._check_keys(name, details)
         depends = set(details["depends"])
         self._must(
@@ -56,3 +57,13 @@ class BuildManager:
             }
         return result
 
+
+    def _is_phony(self, node):
+        if "phony" not in node:
+            return False
+        
+        if node["phony"] is True:
+            return True
+        else:
+            return False 
+        
